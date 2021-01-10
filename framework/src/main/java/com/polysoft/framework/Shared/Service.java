@@ -7,12 +7,6 @@ public class Service {
 
     // INSTANCE VARIABLES
 
-    /**
-     * Name of the service.
-     */
-    private String serviceName;
-
-
 
     // CONSTRUCTORS
 
@@ -20,8 +14,7 @@ public class Service {
      * Default constructor.
      * @param name Name of the service.
      */
-    public Service(final String name) {
-        this.serviceName = name;
+    public Service() {
     }
 
 
@@ -32,9 +25,6 @@ public class Service {
      * Gets the name of the service.
      * @return Retruns the name of the service.
      */
-    public String getName() {
-        return this.serviceName;
-    }
 
     /**
      * Starts the service's operations.

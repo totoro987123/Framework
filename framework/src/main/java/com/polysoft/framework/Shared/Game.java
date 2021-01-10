@@ -1,6 +1,9 @@
 package com.polysoft.framework.Shared;
 
+import com.github.thorbenkuck.netcom2.network.shared.CommunicationRegistration;
 import com.polysoft.framework.Shared.Exceptions.ServiceNotFound;
+import com.polysoft.framework.Shared.Interfaces.RemoteEvent;
+
 import java.util.HashMap;
 
 /**
@@ -17,6 +20,10 @@ public class Game {
      * HashMap for storing all services with their associated names.
      */
     private HashMap<String, Service> services = new HashMap<String, Service>();
+    private boolean server = false;
+    private ReflectionHelper reflectionHelper;
+    private CommunicationRegistration communicationRegistration;
+
 
 
 
@@ -25,16 +32,17 @@ public class Game {
     /**
      * Constructs a default game class.
      */
-    public Game() {
+    public Game(boolean server) {
+        this.server = server;
+
+        this.reflectionHelper = new ReflectionHelper(this);
+
+        AnnotationProcessor.game = this;
+        AnnotationProcessor.reflectionHelper = this.reflectionHelper;
+
+        this.addServices(this.reflectionHelper.getServices());
     }
 
-    /**
-     * Constructs a game that includes the starting services given.
-     * @param startingServices Array of services to load at the start.
-     */
-    public Game(final Service[] startingServices) {
-        this.addServices(startingServices);
-    }
 
 
 
@@ -69,7 +77,7 @@ public class Game {
      */
     public Service getService(final String serviceName) {
         try {
-            Service foundService = this.services.get(serviceName);
+            Service foundService = this.services.get(serviceName.toUpperCase());
 
             if (foundService == null) {
                 throw new ServiceNotFound(
@@ -91,8 +99,8 @@ public class Game {
      * @param service Service to add to the game.
      */
     public void addService(final Service service) {
-        System.out.println(service.getName());
-        this.services.put(service.getName(), service);
+        String name = service.getClass().getSimpleName().toUpperCase();
+        this.services.put(name, service);
     }
 
     /**
@@ -103,12 +111,40 @@ public class Game {
         for (Service service : newServices) {
             this.addService(service);
         }
+
+        for (Service service : newServices) {
+            AnnotationProcessor.applyAnnotations(service);
+        }
     }
 
     /**
      * Loads the game by processing annotations of all loaded services.
      */
     public void load() {
-        ServiceLoader.processVariableAnnotations(this, this.getServiceArray());
+        Object[] objects = this.reflectionHelper.convertClasslistToObjects(this.reflectionHelper.getSubTypeClasses(RemoteEvent.class));
+        for (Object object : objects) {
+            AnnotationProcessor.applyRemoteAnnotations(object);
+        }
+
+
+        for (Service service : this.services.values()) {
+            service.initialize();
+        }
+    }
+
+    public void setServer(boolean server) {
+        this.server = server;
+    }
+
+    public boolean isServer() {
+        return this.server;
+    }
+
+    public CommunicationRegistration getCommunicationRegistration() {
+        return this.communicationRegistration;
+    }
+
+    public void setCommunicationRegistration(CommunicationRegistration communicationRegistration) {
+        this.communicationRegistration = communicationRegistration;
     }
 }

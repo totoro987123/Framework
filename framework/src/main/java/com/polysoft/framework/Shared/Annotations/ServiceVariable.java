@@ -11,9 +11,4 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ServiceVariable {
-    /**
-     * Used to get the name put into the annotation.
-     * @return Returns the service name.
-     */
-    String serviceName() default "";
 }

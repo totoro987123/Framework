@@ -1,4 +1,4 @@
-package com.polysoft.framework.Server.Annotations;
+package com.polysoft.framework.Shared.Annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
