@@ -1,4 +1,6 @@
 {
-    "java.checkstyle.configuration": "/sun_checks.xml",
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.checkstyle.configuration": "${workspaceFolder}/framework/checkstyle.xml",
+    
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.checkstyle.version": "8.39"
 }

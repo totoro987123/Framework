@@ -4,15 +4,39 @@ import com.github.thorbenkuck.netcom2.exceptions.ClientConnectionFailedException
 import com.github.thorbenkuck.netcom2.exceptions.StartFailedException;
 import com.github.thorbenkuck.netcom2.network.server.RemoteObjectRegistration;
 import com.github.thorbenkuck.netcom2.network.server.ServerStart;
-import com.github.thorbenkuck.netcom2.network.shared.CommunicationRegistration;
 import com.polysoft.framework.Shared.Game;
 
+/**
+ * Server class for handling server-side functions.
+ */
 public class Server extends Game implements Runnable {
     
+    // INSTANCE FIELDS
+
+    /**
+     * Serverstart instance.
+     */
     private ServerStart serverStart;
+
+    /**
+     * The value for the port that the server is listening on.
+     */
     private int port;
+
+    /**
+     * The remoteObjectRegistration object, which is used to establish remote interfaces.
+     */
     private RemoteObjectRegistration objectRegistration;
 
+
+
+
+    // CONSTRUCTORS
+
+    /**
+     * Default constructor.
+     * @param port The port on which to establish the server.
+     */
     public Server(int port) {
         super(true);
 
@@ -23,6 +47,14 @@ public class Server extends Game implements Runnable {
         this.objectRegistration = RemoteObjectRegistration.open(this.serverStart);
     }
 
+
+
+
+    // PUBLIC METHODS
+
+    /**
+     * Opens the server on the given port.
+     */
     public void open() {
         try {
             this.serverStart.launch();
@@ -33,29 +65,43 @@ public class Server extends Game implements Runnable {
         new Thread(this).start();
     }
 
+
+    /**
+     * Runs the server and listens for client connections.
+     */
     @Override
-	public void run() {
+    public void run() {
         System.out.println("Server is now running at port " + port + ".");
 
-        this.serverStart.addClientConnectedHandler((client) -> 
-        {
+        this.serverStart.addClientConnectedHandler((client) -> {
             System.out.println("New connection");
 
             //Player leaving here
         });
 
-        try 
-        {
+        try {
             this.serverStart.acceptAllNextClients();
         } catch (ClientConnectionFailedException e) {
             e.printStackTrace();
         }
     }
 
+
+    /**
+     * Starts the server.
+     */
     public void start() {
         this.load();
-        RemoteMethodProcessor.processRemoteMethods(this, this.getServiceArray());
         this.open();
+    }
+
+
+    /**
+     * Closes the server.
+     * ![BROKEN] Fix and test this method.
+     */
+    public void close() {
+        this.serverStart.disconnect();
     }
 
 }

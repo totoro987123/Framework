@@ -1,9 +1,9 @@
 package com.polysoft.framework.Shared;
 
 import com.github.thorbenkuck.netcom2.network.shared.CommunicationRegistration;
+import com.polysoft.framework.Shared.Annotations.AnnotationProcessor;
 import com.polysoft.framework.Shared.Exceptions.ServiceNotFound;
-import com.polysoft.framework.Shared.Interfaces.RemoteEvent;
-
+import com.polysoft.framework.Shared.Interfaces.Service;
 import java.util.HashMap;
 
 /**
@@ -14,14 +14,26 @@ import java.util.HashMap;
  */
 public class Game {
 
-    // INSTANCE VARIABLES
+    // INSTANCE FIELDS
 
     /**
      * HashMap for storing all services with their associated names.
      */
     private HashMap<String, Service> services = new HashMap<String, Service>();
+
+    /**
+     * Boolean indicating if this game instance is the server or the client.
+     */
     private boolean server = false;
+
+    /**
+     * Reflection helper object used for auxiliary reflection methods.
+     */
     private ReflectionHelper reflectionHelper;
+
+    /**
+     * CommunicationRegistration object for registration of events.
+     */
     private CommunicationRegistration communicationRegistration;
 
 
@@ -31,6 +43,7 @@ public class Game {
 
     /**
      * Constructs a default game class.
+     * @param server Boolean for if it is the server of the client.
      */
     public Game(boolean server) {
         this.server = server;
@@ -39,8 +52,6 @@ public class Game {
 
         AnnotationProcessor.game = this;
         AnnotationProcessor.reflectionHelper = this.reflectionHelper;
-
-        this.addServices(this.reflectionHelper.getServices());
     }
 
 
@@ -64,6 +75,28 @@ public class Game {
 
         return serviceArray;
     }
+
+
+
+
+    // PROTECTED METHODS
+
+    /**
+     * Sets if this is the server of the client.
+     * @param server A boolean representing whether or not this is the server.
+     */
+    protected void setServer(boolean server) {
+        this.server = server;
+    }
+
+    /**
+     * Sets the communication registration object.
+     * @param communicationRegistration The communication registration object.
+     */
+    protected void setCommunicationRegistration(CommunicationRegistration communicationRegistration) {
+        this.communicationRegistration = communicationRegistration;
+    }
+
 
 
 
@@ -94,6 +127,7 @@ public class Game {
         return null;
     }
 
+
     /**
      * Adds a service to the game's services.
      * @param service Service to add to the game.
@@ -103,6 +137,7 @@ public class Game {
         this.services.put(name, service);
     }
 
+
     /**
      * Adds all listed services to the game's services.
      * @param newServices Array of services all to be added to the game.
@@ -111,40 +146,37 @@ public class Game {
         for (Service service : newServices) {
             this.addService(service);
         }
-
-        for (Service service : newServices) {
-            AnnotationProcessor.applyAnnotations(service);
-        }
     }
+
 
     /**
      * Loads the game by processing annotations of all loaded services.
      */
     public void load() {
-        Object[] objects = this.reflectionHelper.convertClasslistToObjects(this.reflectionHelper.getSubTypeClasses(RemoteEvent.class));
-        for (Object object : objects) {
-            AnnotationProcessor.applyRemoteAnnotations(object);
-        }
+        this.addServices(this.reflectionHelper.getServices());
 
-
+        // Initialize all services.
         for (Service service : this.services.values()) {
             service.initialize();
         }
     }
 
-    public void setServer(boolean server) {
-        this.server = server;
-    }
 
+    /**
+     * Returns a boolean indicating whether or not this is the server.
+     * @return Boolean indicating whether or not this is the server.
+     */
     public boolean isServer() {
         return this.server;
     }
 
+
+    /**
+     * Returns the communication registration object.
+     * @return CommunicationRegistration returns the communication registration object.
+     */
     public CommunicationRegistration getCommunicationRegistration() {
         return this.communicationRegistration;
     }
 
-    public void setCommunicationRegistration(CommunicationRegistration communicationRegistration) {
-        this.communicationRegistration = communicationRegistration;
-    }
 }
