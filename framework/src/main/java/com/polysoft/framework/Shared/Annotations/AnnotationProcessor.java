@@ -1,6 +1,5 @@
 package com.polysoft.framework.Shared.Annotations;
 
-import com.github.thorbenkuck.netcom2.network.shared.Session;
 import com.polysoft.framework.Shared.Game;
 import com.polysoft.framework.Shared.Interfaces.Service;
 import com.polysoft.framework.Shared.ReflectionHelper;
