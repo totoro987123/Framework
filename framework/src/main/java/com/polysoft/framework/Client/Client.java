@@ -23,8 +23,7 @@ public class Client extends Game {
 
     }
 
-    public void connect() 
-    {
+    public void connect() {
         try 
         {
             this.clientStart.launch();
@@ -33,8 +32,7 @@ public class Client extends Game {
         }
     }
 
-    public void send(Object object) 
-    {
+    public void send(Object object) {
         Sender.open(clientStart)
             .objectToServer(object);
 

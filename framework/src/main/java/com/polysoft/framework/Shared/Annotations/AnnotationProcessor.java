@@ -1,8 +1,11 @@
 package com.polysoft.framework.Shared.Annotations;
 
+import com.github.thorbenkuck.netcom2.network.shared.Session;
 import com.polysoft.framework.Shared.Game;
 import com.polysoft.framework.Shared.Interfaces.Service;
 import com.polysoft.framework.Shared.ReflectionHelper;
+import com.polysoft.framework.Shared.User;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,8 +18,7 @@ public final class AnnotationProcessor {
     /**
      * Default constructor made private to prevent instantiation.
      */
-    private AnnotationProcessor() {}
-
+    private AnnotationProcessor() { }
 
 
 
@@ -70,15 +72,19 @@ public final class AnnotationProcessor {
             try {
                 Class<?> type = method.getParameterTypes()[0];
 
+                boolean requiresLogin = method.getAnnotation(RemoteMethod.class).login();
+
                 game.getCommunicationRegistration()
                         .register(type)
                         .addFirst((session, incomingObject) -> {
+                            User user = new User(session);
                             try {
-                                method.invoke(newObject, incomingObject, session);
+                                method.invoke(newObject, incomingObject, user);
                             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                                 e.printStackTrace();
                             }
-                        });
+                        })
+                        .require(requiresLogin ? (session -> session.isIdentified()) : (session -> true));
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }

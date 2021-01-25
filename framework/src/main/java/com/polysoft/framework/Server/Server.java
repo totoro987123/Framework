@@ -4,13 +4,16 @@ import com.github.thorbenkuck.netcom2.exceptions.ClientConnectionFailedException
 import com.github.thorbenkuck.netcom2.exceptions.StartFailedException;
 import com.github.thorbenkuck.netcom2.network.server.RemoteObjectRegistration;
 import com.github.thorbenkuck.netcom2.network.server.ServerStart;
+import com.github.thorbenkuck.netcom2.network.shared.clients.ClientConnectedHandler;
+import com.polysoft.framework.Server.Interfaces.UserConnectedHandler;
 import com.polysoft.framework.Shared.Game;
+import com.polysoft.framework.Shared.User;
 
 /**
  * Server class for handling server-side functions.
  */
 public class Server extends Game implements Runnable {
-    
+
     // INSTANCE FIELDS
 
     /**
@@ -24,17 +27,16 @@ public class Server extends Game implements Runnable {
     private int port;
 
     /**
-     * The remoteObjectRegistration object, which is used to establish remote interfaces.
+     * The remoteObjectRegistration object, which is used to establish remote
+     * interfaces.
      */
     private RemoteObjectRegistration objectRegistration;
-
-
-
 
     // CONSTRUCTORS
 
     /**
      * Default constructor.
+     * 
      * @param port The port on which to establish the server.
      */
     public Server(int port) {
@@ -46,9 +48,6 @@ public class Server extends Game implements Runnable {
         this.setCommunicationRegistration(this.serverStart.getCommunicationRegistration());
         this.objectRegistration = RemoteObjectRegistration.open(this.serverStart);
     }
-
-
-
 
     // PUBLIC METHODS
 
@@ -65,7 +64,6 @@ public class Server extends Game implements Runnable {
         new Thread(this).start();
     }
 
-
     /**
      * Runs the server and listens for client connections.
      */
@@ -76,7 +74,7 @@ public class Server extends Game implements Runnable {
         this.serverStart.addClientConnectedHandler((client) -> {
             System.out.println("New connection");
 
-            //Player leaving here
+            // Player leaving here
         });
 
         try {
@@ -86,7 +84,15 @@ public class Server extends Game implements Runnable {
         }
     }
 
+    public void addClientConnectedHandler(UserConnectedHandler connectHandler) {
+        ClientConnectedHandler handler = client -> {
+            User user = new User(client.getSession());
+            connectHandler.connected(user);
+        };
 
+        this.serverStart.addClientConnectedHandler(handler);
+    }
+ 
     /**
      * Starts the server.
      */

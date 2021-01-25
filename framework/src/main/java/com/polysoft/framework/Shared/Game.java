@@ -2,6 +2,7 @@ package com.polysoft.framework.Shared;
 
 import com.github.thorbenkuck.netcom2.network.shared.CommunicationRegistration;
 import com.polysoft.framework.Shared.Annotations.AnnotationProcessor;
+import com.polysoft.framework.Shared.Exceptions.ObjectNotRegisteredException;
 import com.polysoft.framework.Shared.Exceptions.ServiceNotFound;
 import com.polysoft.framework.Shared.Interfaces.Service;
 import java.util.HashMap;
@@ -95,6 +96,16 @@ public class Game {
      */
     protected void setCommunicationRegistration(CommunicationRegistration communicationRegistration) {
         this.communicationRegistration = communicationRegistration;
+
+        this.communicationRegistration.addDefaultCommunicationHandler((object) -> {
+            String className = object.getClass().getSimpleName();
+            
+            try {
+                throw new ObjectNotRegisteredException("Error: Object of class " + className + " is not registered!");
+            } catch (ObjectNotRegisteredException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 

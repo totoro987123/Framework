@@ -1,6 +1,6 @@
 package com.polysoft.framework.Server.Services;
 
-import com.github.thorbenkuck.netcom2.network.shared.Session;
+import com.polysoft.framework.Shared.User;
 import com.polysoft.framework.Shared.Annotations.AnnotationProcessor;
 import com.polysoft.framework.Shared.Annotations.RemoteMethod;
 import com.polysoft.framework.Shared.Interfaces.Service;
@@ -17,7 +17,7 @@ public class TestService2 implements Service {
     }
 
     @RemoteMethod()
-    private void remoteTest(TestPacket testPacket, Session session) {
+    private void remoteTest(TestPacket testPacket, User user) {
         System.out.println(testPacket.getString() + " DOF");
         ts.boop();
     }

@@ -1,6 +1,6 @@
 package com.polysoft.framework.Server.Services;
 
-import com.github.thorbenkuck.netcom2.network.shared.Session;
+import com.polysoft.framework.Shared.User;
 import com.polysoft.framework.Shared.Annotations.AnnotationProcessor;
 import com.polysoft.framework.Shared.Annotations.RemoteMethod;
 import com.polysoft.framework.Shared.Annotations.ServiceVariable;
@@ -18,8 +18,8 @@ public class Test3 {
         AnnotationProcessor.applyServiceAnnotations(this);
     }
 
-    @RemoteMethod()
-    private void remoteTest(TestPacket testPacket, Session session) {
+    @RemoteMethod(login = true)
+    private void remoteTest(TestPacket testPacket, User user) {
         System.out.println("BAN BAN BAN");
         testService2.noob();
         testService2.noob();

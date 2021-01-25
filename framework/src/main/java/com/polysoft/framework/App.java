@@ -4,6 +4,7 @@ import com.polysoft.framework.Server.Server;
 import com.polysoft.framework.Shared.Game;
 import com.polysoft.framework.Shared.Interfaces.Service;
 import com.polysoft.framework.Shared.Packets.TestPacket;
+import com.polysoft.framework.Shared.Packets.TestPacket2;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -32,12 +33,17 @@ public final class App {
         Server server = new Server(port);
         server.start();
 
+        server.addClientConnectedHandler(user -> {
+            System.out.println("user connected");
+        });
+
         ((TestService) server.getService("TestService")).boop();
 
         Client client = new Client(address, port);
         client.connect();
 
         client.send(new TestPacket("BOOOPP"));
+
 
     }
 }

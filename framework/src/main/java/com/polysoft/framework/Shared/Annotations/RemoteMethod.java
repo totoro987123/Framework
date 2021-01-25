@@ -10,4 +10,11 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RemoteMethod {}
+public @interface RemoteMethod {
+
+    /**
+     * Checks if the method requires a login to run.
+     * @return boolean Weather or not the user needs to be logged in to use this method.
+     */
+    public boolean login() default false;
+}
